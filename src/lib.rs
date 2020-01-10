@@ -1,6 +1,4 @@
-use std::thread;
-
 #[no_mangle]
-pub extern fn demi()->i32 {
+pub extern fn dummy()->i32 {
     return 42;
 }
