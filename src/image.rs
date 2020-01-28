@@ -6,5 +6,5 @@ pub struct Pixel {
 pub struct Image {
     pub height : u8,
     pub width : u8,
-    pub pixels : [Pixel; 1]
+    pub pixels : Vec<Pixel>
 }
