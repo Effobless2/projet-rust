@@ -1,6 +1,10 @@
 mod pixel;
+mod image;
+
+pub use crate::image::image as imageModule;
 
 pub use crate::pixel::pixel as pixelModule;
+
 
 #[no_mangle]
 pub extern fn dummy()->u8 {
