@@ -49,8 +49,8 @@ pub mod pixel {
         }
     }
 
-    pub fn greyscale(pixel: Pixel) -> Pixel{
-        let x = pixel.red() + pixel.green() + pixel.blue() / 3;
+    pub fn grayscale(pixel: Pixel) -> Pixel{
+        let x = ((pixel.red() as u32 + pixel.green() as u32 + pixel.blue() as u32) / 3) as u8;
         Pixel::new(x, x, x)
     }
 }
@@ -111,18 +111,15 @@ mod pixel_tests {
         pc.inverse();
         assert_eq!(p != pc, true);
     }
-/*
+
     #[test]
-    fn imageTest(){
-        let mut x = Vec::new();
-        x.push(pixel_mod::Pixel::new(8, 10, 15));
-        let image = pixel_mod::Image{
-            height: 5,
-            width: 10,
-            pixels: x
-        };
-        assert_eq!(image.height, 5);
-        assert_eq!(image.width, 10);
-        assert_eq!(image.pixels.len(), 1);
-    }*/
+    fn pixel_grayscale(){
+        let p = pixel_mod::Pixel::new(10, 52, 10);
+        let gray = pixel_mod::grayscale(p);
+        assert_eq!(gray.red(), gray.green());
+        assert_eq!(gray.red(), gray.blue());
+        assert_eq!(gray.green(), gray.blue());
+        assert_eq!(gray.red(), 24);
+    }
+
 }

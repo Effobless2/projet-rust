@@ -1,6 +1,5 @@
 mod pixel;
 mod image;
-use std::path::Path;
 
 pub use crate::image::image as image_mod;
 

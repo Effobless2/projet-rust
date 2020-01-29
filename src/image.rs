@@ -6,6 +6,7 @@ pub mod image{
 
     use crate::pixel::pixel;
 
+    #[derive(Clone)]
     pub struct Image{
         pub height: usize,
         pub width: usize,
@@ -139,6 +140,32 @@ pub mod image{
             return result;
         }
     }
+
+    pub fn invert(image :Image) -> Image{
+        let mut pixels = image.pixels;
+        for  i in 0..pixels.len() {
+            pixels[i].inverse();
+        }
+        return Image{
+            height: image.height,
+            width: image.width,
+            pixels: pixels,
+            pixel_encoding: image.pixel_encoding
+        };
+    }
+
+    pub fn grayscale(image : Image) -> Image{
+        let mut pixels = image.pixels;
+        for  i in 0..pixels.len() {
+            pixels[i] = pixel::grayscale(pixels[i]);
+        }
+        return Image{
+            height: image.height,
+            width: image.width,
+            pixels: pixels,
+            pixel_encoding: image.pixel_encoding
+        };
+    }
 }
 
 #[cfg(test)]
@@ -164,6 +191,7 @@ mod image_test{
 
         assert_eq!(image.height, 3);
         assert_eq!(image.width, 2);
+        assert_eq!(image.pixel_encoding, 255);
         assert_eq!(image.pixels.len(), pixels.len());
         for i in 0..image.pixels.len() {
             assert_eq!(image.pixels[i] == pixels[i], true);
@@ -173,7 +201,51 @@ mod image_test{
     #[test]
     fn image_save(){
         let image = image_mod::Image::new_with_file(Path::new("./test.ppm"));
-        let result = image.save(Path::new("./result.ppm"));
+        let _result = image.save(Path::new("./result.ppm"));
         assert_eq!(1,1);
+    }
+
+    #[test]
+    fn image_invert(){
+        let mut pixels : Vec<pixel::Pixel> = Vec::new();
+        pixels.push(pixel::Pixel::new(0, 255, 255));
+        pixels.push(pixel::Pixel::new(255, 0, 255));
+        pixels.push(pixel::Pixel::new(255, 255, 0));
+        pixels.push(pixel::Pixel::new(0, 0, 255));
+        pixels.push(pixel::Pixel::new(0, 0, 0));
+        pixels.push(pixel::Pixel::new(255, 255, 255));
+
+        let image = image_mod::Image::new_with_file(Path::new("./test.ppm"));
+        let inv = image_mod::invert(image);
+        assert_eq!(inv.height, 3);
+        assert_eq!(inv.width, 2);
+        assert_eq!(inv.pixel_encoding, 255);
+        assert_eq!(inv.pixels.len(), pixels.len());
+        for i in 0..inv.pixels.len() {
+            assert_eq!(inv.pixels[i] == pixels[i], true);
+        }
+        let _result = inv.save(Path::new("./result.ppm"));
+    }
+
+    #[test]
+    fn image_grayscale(){
+        let mut pixels : Vec<pixel::Pixel> = Vec::new();
+        pixels.push(pixel::Pixel::new(85, 85, 85));
+        pixels.push(pixel::Pixel::new(85, 85, 85));
+        pixels.push(pixel::Pixel::new(85, 85, 85));
+        pixels.push(pixel::Pixel::new(170, 170, 170));
+        pixels.push(pixel::Pixel::new(255, 255, 255));
+        pixels.push(pixel::Pixel::new(0, 0, 0));
+
+        let image = image_mod::Image::new_with_file(Path::new("./test.ppm"));
+        let gray = image_mod::grayscale(image);
+        assert_eq!(gray.height, 3);
+        assert_eq!(gray.width, 2);
+        assert_eq!(gray.pixel_encoding, 255);
+        assert_eq!(gray.pixels.len(), pixels.len());
+        for i in 0..gray.pixels.len() {
+            assert_eq!(gray.pixels[i] == pixels[i], true);
+        }
+        let _result = gray.save(Path::new("./result.ppm"));
     }
 }
