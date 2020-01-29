@@ -12,7 +12,7 @@ pub mod image{
     }
 
     impl Image{
-        pub fn new(filename: &Path) -> Image{
+        pub fn new_with_file(filename: &Path) -> Image{
             let file = File::open(filename);
 
             let mut height_chars : Vec<char> = Vec::new();
@@ -72,8 +72,8 @@ pub mod image{
             image_values.push(Image::convert_vec_to_u8(current_pixel));
 
 
-            let height: usize = Image::convert_vec_to_u32(height_chars);
-            let width : usize = Image::convert_vec_to_u32(width_chars);
+            let height: usize = Image::convert_vec_to_usize(height_chars);
+            let width : usize = Image::convert_vec_to_usize(width_chars);
 
             let mut pixels : Vec<pixel::Pixel> = Vec::new();
             for i in 0..image_values.len() + 1{
@@ -88,7 +88,7 @@ pub mod image{
             };
         }
 
-        fn convert_vec_to_u32(vector : Vec<char>) -> usize{
+        fn convert_vec_to_usize(vector : Vec<char>) -> usize{
             let mut result : usize = 0;
             for i in 0..vector.len() {
                 if i == vector.len() - 1{
@@ -132,7 +132,7 @@ mod image_test{
         pixels.push(pixel::Pixel::new(255, 255, 255));
         pixels.push(pixel::Pixel::new(0, 0, 0));
         
-        let image = image_mod::Image::new(Path::new("./test.ppm"));
+        let image = image_mod::Image::new_with_file(Path::new("./test.ppm"));
         assert_eq!(image.pixels.len(), 6);
 
         assert_eq!(image.height, 3);
