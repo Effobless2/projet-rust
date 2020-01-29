@@ -1,13 +1,16 @@
 mod pixel;
 mod image;
+use std::path::Path;
 
-pub use crate::image::image as imageModule;
+pub use crate::image::image as image_mod;
 
 pub use crate::pixel::pixel as pixelModule;
 
 
 #[no_mangle]
 pub extern fn dummy()->u8 {
+    print!("caca");
+    let pixels = image_mod::Image::new(Path::new("./test.ppm"));
     return 42;
 }
 
