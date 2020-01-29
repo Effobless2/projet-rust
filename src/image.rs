@@ -2,12 +2,14 @@ pub mod image{
     use std::io::Read;
     use std::fs::File;
     use std::path::Path;
+    use std::io::Write;
 
     use crate::pixel::pixel;
 
     pub struct Image{
         pub height: usize,
         pub width: usize,
+        pub pixel_encoding: usize,
         pub pixels: Vec<pixel::Pixel>
     }
 
@@ -74,6 +76,7 @@ pub mod image{
 
             let height: usize = Image::convert_vec_to_usize(height_chars);
             let width : usize = Image::convert_vec_to_usize(width_chars);
+            let pixel_encoding : usize = Image::convert_vec_to_usize(code);
 
             let mut pixels : Vec<pixel::Pixel> = Vec::new();
             for i in 0..image_values.len() + 1{
@@ -84,8 +87,32 @@ pub mod image{
             return Image{
                 height: height,
                 width: width,
+                pixel_encoding : pixel_encoding,
                 pixels: pixels
             };
+        }
+
+        pub fn save(self, filename: &Path) -> std::io::Result<()>{
+            let mut file = File::create(filename)?;
+            file.write("p3\n".as_bytes())?;
+            file.write(self.height.to_string().as_bytes())?;
+            file.write(" ".as_bytes())?;
+            file.write(self.width.to_string().as_bytes())?;
+            file.write("\n".as_bytes())?;
+            file.write(self.pixel_encoding.to_string().as_bytes())?;
+            file.write("\n".as_bytes())?;
+
+            for i in 0..self.pixels.len() {
+                file.write(self.pixels[i].red().to_string().as_bytes())?;
+                file.write(" ".as_bytes())?;
+                file.write(self.pixels[i].green().to_string().as_bytes())?;
+                file.write(" ".as_bytes())?;
+                file.write(self.pixels[i].blue().to_string().as_bytes())?;
+                file.write("\n".as_bytes())?;
+            }
+
+
+            return Ok(());
         }
 
         fn convert_vec_to_usize(vector : Vec<char>) -> usize{
@@ -122,7 +149,7 @@ mod image_test{
     use crate::pixel::pixel;
 
     #[test]
-    fn image_load_test(){
+    fn image_load(){
 
         let mut pixels : Vec<pixel::Pixel> = Vec::new();
         pixels.push(pixel::Pixel::new(255, 0, 0));
@@ -141,5 +168,12 @@ mod image_test{
         for i in 0..image.pixels.len() {
             assert_eq!(image.pixels[i] == pixels[i], true);
         }
+    }
+
+    #[test]
+    fn image_save(){
+        let image = image_mod::Image::new_with_file(Path::new("./test.ppm"));
+        let result = image.save(Path::new("./result.ppm"));
+        assert_eq!(1,1);
     }
 }
