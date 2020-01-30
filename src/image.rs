@@ -219,7 +219,7 @@ mod image_test{
         let _result = image.save(Path::new("./result.ppm"));
         assert_eq!(1,1);
     }
-/*
+
     #[test]
     fn image_invert(){
         let mut pixels : Vec<pixel::Pixel> = Vec::new();
@@ -262,5 +262,5 @@ mod image_test{
             assert_eq!(gray.pixels[i] == pixels[i], true);
         }
         let _result = gray.save(Path::new("./result.ppm"));
-    }*/
+    }
 }
