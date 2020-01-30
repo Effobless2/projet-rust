@@ -239,7 +239,7 @@ mod image_test{
         for i in 0..inv.pixels.len() {
             assert_eq!(inv.pixels[i] == pixels[i], true);
         }
-        let _result = inv.save(Path::new("./result.ppm"));
+        let _result = inv.save(Path::new("./resultI.ppm"));
     }
 
     #[test]
@@ -261,6 +261,6 @@ mod image_test{
         for i in 0..gray.pixels.len() {
             assert_eq!(gray.pixels[i] == pixels[i], true);
         }
-        let _result = gray.save(Path::new("./result.ppm"));
+        let _result = gray.save(Path::new("./resultG.ppm"));
     }
 }
