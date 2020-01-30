@@ -3,6 +3,8 @@ pub mod image{
     use std::fs::File;
     use std::path::Path;
     use std::io::Write;
+    use std::sync::mpsc;
+    use std::thread;
 
     use crate::pixel::pixel;
 
@@ -16,79 +18,92 @@ pub mod image{
 
     impl Image{
         pub fn new_with_file(filename: &Path) -> Image{
+            let (transmitter, receiver) = mpsc::channel();
             let file = File::open(filename);
+            let reader = thread::spawn(move || -> (usize, usize, usize) {
+                
 
-            let mut height_chars : Vec<char> = Vec::new();
-            let mut height_found : bool = false;
+                let mut height_chars : Vec<char> = Vec::new();
+                let mut height_found : bool = false;
 
-            let mut width_chars : Vec<char> = Vec::new();
-            let mut width_found : bool = false;
+                let mut width_chars : Vec<char> = Vec::new();
+                let mut width_found : bool = false;
 
-            let mut code : Vec<char> = Vec::new();
-            let mut code_found : bool = false;
+                let mut code : Vec<char> = Vec::new();
+                let mut code_found : bool = false;
 
+                let mut current_pixel : Vec<char> = Vec::new();
 
-            let mut image_values : Vec<u8> = Vec::new();
-
-            let mut current_pixel : Vec<char> = Vec::new();
-
-            let mut i : usize = 0;
-            for byte in file.unwrap().bytes() {
-                if i > 3 {
+                let mut i : usize = 0;
+                for byte in file.unwrap().bytes() {
+                    if i > 3 {
                         let current_char : char = byte.unwrap() as char;
-                    if !height_found { //
-                        if  current_char >= '0' &&
+                        if !height_found { //
+                            if  current_char >= '0' &&
                             current_char <= '9' {
                                 height_chars.push(current_char);
-                        } else if height_chars.len() > 0 {
-                            height_found = true;
+                            } else if height_chars.len() > 0 {
+                                height_found = true;
+                            }
                         }
-                    }
-                    else if !width_found {
-                        if  current_char >= '0' &&
+                        else if !width_found {
+                            if  current_char >= '0' &&
                             current_char <= '9' {
                                 width_chars.push(current_char);
-                        } else if width_chars.len() > 0 {
-                            width_found = true;
+                            } else if width_chars.len() > 0 {
+                                width_found = true;
+                            }
                         }
-                    }
-                    else if !code_found {
-                        if  current_char >= '0' &&
+                        else if !code_found {
+                            if  current_char >= '0' &&
                             current_char <= '9' {
                                 code.push(current_char);
-                        } else if code.len() > 0 {
-                            code_found = true;
+                            } else if code.len() > 0 {
+                                code_found = true;
+                            }
                         }
-                    }
-                    else {
-                        if  current_char >= '0' &&
+                        else {
+                            if  current_char >= '0' &&
                             current_char <= '9' {
-                            current_pixel.push(current_char);
-                        } else if current_pixel.len() > 0 {
-                            image_values.push(Image::convert_vec_to_u8(current_pixel));
-                            current_pixel = Vec::new();
+                                current_pixel.push(current_char);
+                            } else if current_pixel.len() > 0 {
+                                transmitter.send(Image::convert_vec_to_u8(current_pixel));
+                                current_pixel = Vec::new();
+                            }
                         }
                     }
+                    i+= 1;
                 }
-                i+= 1;
-            }
-            image_values.push(Image::convert_vec_to_u8(current_pixel));
+                transmitter.send(Image::convert_vec_to_u8(current_pixel));
+                return (Image::convert_vec_to_usize(height_chars), Image::convert_vec_to_usize(width_chars), Image::convert_vec_to_usize(code));
+            });
 
-
-            let height: usize = Image::convert_vec_to_usize(height_chars);
-            let width : usize = Image::convert_vec_to_usize(width_chars);
-            let pixel_encoding : usize = Image::convert_vec_to_usize(code);
-
+            let mut r_received :bool = false;
+            let mut r :u8 = 0;
+            let mut g_received :bool = false;
+            let mut g :u8 = 0;
             let mut pixels : Vec<pixel::Pixel> = Vec::new();
-            for i in 0..image_values.len() + 1{
-                if i % 3 == 2 {
-                    pixels.push(pixel::Pixel::new(image_values[i - 2], image_values[i - 1], image_values[i]))
+
+            for received in receiver {
+                if !r_received {
+                    r = received;
+                    r_received = true;
+                } else if !g_received {
+                    g = received;
+                    g_received = true;
+                } else {
+                    pixels.push(pixel::Pixel::new(r, g, received));
+                    r_received = false;
+                    g_received = false;
                 }
             }
+            
+            let (h, w, code) = reader.join().unwrap();
+
             return Image{
-                height: height,
-                width: width,
-                pixel_encoding : pixel_encoding,
+                height: h,
+                width: w,
+                pixel_encoding : code,
                 pixels: pixels
             };
         }
@@ -204,7 +219,7 @@ mod image_test{
         let _result = image.save(Path::new("./result.ppm"));
         assert_eq!(1,1);
     }
-
+/*
     #[test]
     fn image_invert(){
         let mut pixels : Vec<pixel::Pixel> = Vec::new();
@@ -247,5 +262,5 @@ mod image_test{
             assert_eq!(gray.pixels[i] == pixels[i], true);
         }
         let _result = gray.save(Path::new("./result.ppm"));
-    }
+    }*/
 }
