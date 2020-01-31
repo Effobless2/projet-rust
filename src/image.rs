@@ -67,14 +67,14 @@ pub mod image{
                             current_char <= '9' {
                                 current_pixel.push(current_char);
                             } else if current_pixel.len() > 0 {
-                                transmitter.send(Image::convert_vec_to_u8(current_pixel));
+                                transmitter.send(current_pixel);
                                 current_pixel = Vec::new();
                             }
                         }
                     }
                     i+= 1;
                 }
-                transmitter.send(Image::convert_vec_to_u8(current_pixel));
+                transmitter.send(current_pixel);
                 return (Image::convert_vec_to_usize(height_chars), Image::convert_vec_to_usize(width_chars), Image::convert_vec_to_usize(code));
             });
 
@@ -86,13 +86,13 @@ pub mod image{
 
             for received in receiver {
                 if !r_received {
-                    r = received;
+                    r = Image::convert_vec_to_u8(received);
                     r_received = true;
                 } else if !g_received {
-                    g = received;
+                    g = Image::convert_vec_to_u8(received);
                     g_received = true;
                 } else {
-                    pixels.push(pixel::Pixel::new(r, g, received));
+                    pixels.push(pixel::Pixel::new(r, g, Image::convert_vec_to_u8(received)));
                     r_received = false;
                     g_received = false;
                 }
