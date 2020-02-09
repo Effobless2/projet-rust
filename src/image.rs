@@ -5,6 +5,7 @@ pub mod image{
     use std::io::Write;
     use std::sync::mpsc;
     use std::thread;
+    use std::io::{self, BufReader};
 
     use crate::pixel::pixel;
 
@@ -20,6 +21,7 @@ pub mod image{
         pub fn new_with_file(filename: &Path) -> Image{
             let (transmitter, receiver) = mpsc::channel();
             let file = File::open(filename);
+            let file = BufReader::new(file.unwrap());
             let reader = thread::spawn(move || -> (usize, usize, usize) {
                 
 
@@ -35,7 +37,7 @@ pub mod image{
                 let mut current_pixel : Vec<char> = Vec::new();
 
                 let mut i : usize = 0;
-                for byte in file.unwrap().bytes() {
+                for byte in file.bytes() {
                     if i > 3 {
                         let current_char : char = byte.unwrap() as char;
                         if !height_found { //
