@@ -4,12 +4,23 @@ pub mod image;
 pub use crate::image::image as image_mod;
 
 pub use crate::pixel::pixel as pixelModule;
+use std::path::Path;
+use std::ffi::CStr;
+use std::os::raw::c_char;
 
 
 #[no_mangle]
 pub extern fn dummy()->u8 {
-    print!("caca");
     return 42;
+}
+
+#[no_mangle]
+pub extern fn generate_invert_image(from: *const c_char, to: *const c_char){
+    let s_from = unsafe { CStr::from_ptr(from) }; 
+    let s_to = unsafe { CStr::from_ptr(to) }; 
+    let image = image_mod::Image::new_with_file(Path::new(s_from.to_str().unwrap()));
+    let invert = image_mod::invert(image);
+    invert.save(Path::new(s_to.to_str().unwrap()));
 }
 
 /*
