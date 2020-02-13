@@ -15,12 +15,30 @@ pub extern fn dummy()->u8 {
 }
 
 #[no_mangle]
-pub extern fn generate_invert_image(from: *const c_char, to: *const c_char){
+pub extern fn generate_invert_ppm_file(from: *const c_char, to: *const c_char){
     let s_from = unsafe { CStr::from_ptr(from) }; 
     let s_to = unsafe { CStr::from_ptr(to) }; 
     let image = image_mod::Image::new_with_file(Path::new(s_from.to_str().unwrap()));
     let invert = image_mod::invert(image);
     invert.save(Path::new(s_to.to_str().unwrap()));
+}
+
+#[no_mangle]
+pub extern fn generate_grayscale_ppm_file(from: *const c_char, to: *const c_char){
+    
+    let s_from = unsafe { CStr::from_ptr(from) }; 
+    let s_to = unsafe { CStr::from_ptr(to) }; 
+    let image = image_mod::Image::new_with_file(Path::new(s_from.to_str().unwrap()));
+    let grayscale = image_mod::grayscale(image);
+    grayscale.save(Path::new(s_to.to_str().unwrap()));
+}
+
+#[no_mangle]
+pub extern fn copy_ppm_file(from: *const c_char, to: *const c_char){
+    let s_from = unsafe { CStr::from_ptr(from) }; 
+    let s_to = unsafe { CStr::from_ptr(to) }; 
+    let image = image_mod::Image::new_with_file(Path::new(s_from.to_str().unwrap()));
+    image.save(Path::new(s_to.to_str().unwrap()));
 }
 
 /*

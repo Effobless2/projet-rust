@@ -27,5 +27,29 @@ fn save_image_bench(bench: &mut Bencher) {
     )
 }
 
-benchmark_group!(benches, new_image_bench, invert_image_bench, grayscale_image_bench, save_image_bench);
+fn new_pixel_bench(bench: &mut Bencher){
+    bench.iter(|| pixel::pixel::Pixel::new(1,2,3)
+    )
+}
+
+fn inverse_pixel_bench(bench: &mut Bencher){
+    let mut my_pixel = pixel::pixel::Pixel::new(1,2,3);
+    bench.iter(|| my_pixel.inverse())
+}
+
+fn grayscale_pixel_bench(bench: &mut Bencher){
+    let my_pixel = pixel::pixel::Pixel::new(1,2,3);
+    bench.iter(|| pixel::pixel::grayscale(my_pixel))
+}
+
+benchmark_group!(
+    benches, 
+    new_image_bench, 
+    invert_image_bench, 
+    grayscale_image_bench, 
+    save_image_bench,
+    new_pixel_bench,
+    inverse_pixel_bench,
+    grayscale_pixel_bench
+);
 benchmark_main!(benches);

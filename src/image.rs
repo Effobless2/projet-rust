@@ -6,6 +6,7 @@ pub mod image{
     use std::sync::mpsc;
     use std::thread;
     use std::io::{BufReader};
+    use std::io::BufRead;
 
     use crate::pixel::pixel;
 
@@ -20,64 +21,42 @@ pub mod image{
     impl Image{
         pub fn new_with_file(filename: &Path) -> Image{
             let (transmitter, receiver) = mpsc::channel();
-            let file = File::open(filename);
-            let file = BufReader::new(file.unwrap());
+            let ffile = File::open(filename);
+            let file = BufReader::new(ffile.unwrap());
             let reader = thread::spawn(move || -> (usize, usize, usize) {
                 
 
-                let mut height_chars : Vec<char> = Vec::new();
-                let mut height_found : bool = false;
+                let mut height :usize = 0;
+                let mut width :usize = 0;
+                let mut dimensions_found : bool = false;
 
-                let mut width_chars : Vec<char> = Vec::new();
-                let mut width_found : bool = false;
-
-                let mut code : Vec<char> = Vec::new();
                 let mut code_found : bool = false;
+                let mut code :usize = 0;
 
-                let mut current_pixel : Vec<char> = Vec::new();
 
-                let mut i : usize = 0;
-                for byte in file.bytes() {
-                    if i > 3 {
-                        let current_char : char = byte.unwrap() as char;
-                        if !height_found { //
-                            if  current_char >= '0' &&
-                            current_char <= '9' {
-                                height_chars.push(current_char);
-                            } else if height_chars.len() > 0 {
-                                height_found = true;
-                            }
+                for line in file.lines() {
+                    let line = line.unwrap();
+                    let chars : Vec<char> = line.chars().collect();
+                    if chars.len() > 0 && chars[0] >= '0' && chars[0] <= '9' {
+                        let list: Vec<&str> = line.split(' ').collect();
+                        if list.len() == 2 && !dimensions_found{
+                            height = list[0].parse().unwrap();
+                            width = list[1].parse().unwrap();
+                            dimensions_found = true;
                         }
-                        else if !width_found {
-                            if  current_char >= '0' &&
-                            current_char <= '9' {
-                                width_chars.push(current_char);
-                            } else if width_chars.len() > 0 {
-                                width_found = true;
-                            }
-                        }
-                        else if !code_found {
-                            if  current_char >= '0' &&
-                            current_char <= '9' {
-                                code.push(current_char);
-                            } else if code.len() > 0 {
-                                code_found = true;
-                            }
+                        else if list.len() == 1 && !code_found { 
+                            code = list[0].parse().unwrap();
+                            code_found = true;
                         }
                         else {
-                            if  current_char >= '0' &&
-                            current_char <= '9' {
-                                current_pixel.push(current_char);
-                            } else if current_pixel.len() > 0 {
-                                transmitter.send(current_pixel);
-                                current_pixel = Vec::new();
+                            for val in list {
+                                let x : u8 = val.parse().unwrap();
+                                transmitter.send(x);
                             }
                         }
                     }
-                    i+= 1;
                 }
-                transmitter.send(current_pixel);
-                return (Image::convert_vec_to_usize(height_chars), Image::convert_vec_to_usize(width_chars), Image::convert_vec_to_usize(code));
+                return (height, width, code);
             });
 
             let mut r_received :bool = false;
@@ -88,13 +67,13 @@ pub mod image{
 
             for received in receiver {
                 if !r_received {
-                    r = Image::convert_vec_to_u8(received);
+                    r = received;
                     r_received = true;
                 } else if !g_received {
-                    g = Image::convert_vec_to_u8(received);
+                    g = received;
                     g_received = true;
                 } else {
-                    pixels.push(pixel::Pixel::new(r, g, Image::convert_vec_to_u8(received)));
+                    pixels.push(pixel::Pixel::new(r, g, received));
                     r_received = false;
                     g_received = false;
                 }
@@ -131,30 +110,6 @@ pub mod image{
 
 
             return Ok(());
-        }
-
-        fn convert_vec_to_usize(vector : Vec<char>) -> usize{
-            let mut result : usize = 0;
-            for i in 0..vector.len() {
-                if i == vector.len() - 1{
-                    result += (vector[i] as u8 - '0' as u8) as usize;
-                } else {
-                    result += (vector[i] as u8 - '0' as u8) as usize * usize::pow(10, (vector.len() - i - 1) as u32) as usize;
-                }
-            }
-            return result;
-        }
-
-        fn convert_vec_to_u8(vector : Vec<char>) -> u8{
-            let mut result : u8 = 0;
-            for i in 0..vector.len() {
-                if i == vector.len() - 1{
-                    result += vector[i] as u8 - '0' as u8;
-                } else {
-                    result += (vector[i] as u8 - '0' as u8) * u32::pow(10, (vector.len() - i - 1) as u32) as u8;
-                }
-            }
-            return result;
         }
     }
 
