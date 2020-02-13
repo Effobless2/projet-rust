@@ -1,5 +1,5 @@
-mod pixel;
-mod image;
+pub mod pixel;
+pub mod image;
 
 pub use crate::image::image as image_mod;
 

@@ -5,7 +5,7 @@ pub mod image{
     use std::io::Write;
     use std::sync::mpsc;
     use std::thread;
-    use std::io::{self, BufReader};
+    use std::io::{BufReader};
 
     use crate::pixel::pixel;
 
