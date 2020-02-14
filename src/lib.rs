@@ -8,6 +8,8 @@ use std::path::Path;
 use std::ffi::CStr;
 use std::os::raw::c_char;
 
+
+/// Returns the 42 number
 #[no_mangle]
 pub extern fn dummy()->u8 {
     return 42;
