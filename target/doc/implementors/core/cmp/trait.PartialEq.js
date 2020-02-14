@@ -1,0 +1,10 @@
+(function() {var implementors = {};
+implementors["bencher"] = [{text:"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html\" title=\"trait core::cmp::PartialEq\">PartialEq</a>&lt;<a class=\"struct\" href=\"bencher/stats/struct.Summary.html\" title=\"struct bencher::stats::Summary\">Summary</a>&gt; for <a class=\"struct\" href=\"bencher/stats/struct.Summary.html\" title=\"struct bencher::stats::Summary\">Summary</a>",synthetic:false,types:["bencher::stats::Summary"]},{text:"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html\" title=\"trait core::cmp::PartialEq\">PartialEq</a>&lt;<a class=\"struct\" href=\"bencher/struct.TestDesc.html\" title=\"struct bencher::TestDesc\">TestDesc</a>&gt; for <a class=\"struct\" href=\"bencher/struct.TestDesc.html\" title=\"struct bencher::TestDesc\">TestDesc</a>",synthetic:false,types:["bencher::TestDesc"]},{text:"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html\" title=\"trait core::cmp::PartialEq\">PartialEq</a>&lt;<a class=\"struct\" href=\"bencher/struct.BenchSamples.html\" title=\"struct bencher::BenchSamples\">BenchSamples</a>&gt; for <a class=\"struct\" href=\"bencher/struct.BenchSamples.html\" title=\"struct bencher::BenchSamples\">BenchSamples</a>",synthetic:false,types:["bencher::BenchSamples"]},];
+implementors["big_project"] = [{text:"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html\" title=\"trait core::cmp::PartialEq\">PartialEq</a>&lt;<a class=\"struct\" href=\"big_project/pixel/pixel/struct.Pixel.html\" title=\"struct big_project::pixel::pixel::Pixel\">Pixel</a>&gt; for <a class=\"struct\" href=\"big_project/pixel/pixel/struct.Pixel.html\" title=\"struct big_project::pixel::pixel::Pixel\">Pixel</a>",synthetic:false,types:["big_project::pixel::pixel::Pixel"]},];
+
+            if (window.register_implementors) {
+                window.register_implementors(implementors);
+            } else {
+                window.pending_implementors = implementors;
+            }
+        })()

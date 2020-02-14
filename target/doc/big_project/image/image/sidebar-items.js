@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["grayscale","Returns an Image from another image with all grayscaled image # Arguments * `image` - Source image # Returns * grayscaled Image"],["invert","Returns an Image from another image with all reversed pixels color # Arguments * `image` - Source image # Returns * Reversed Image"]],"struct":[["Image","Image of a RGB image"]]});

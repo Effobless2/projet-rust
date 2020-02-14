@@ -1,5 +1,4 @@
 pub mod image{
-    use std::io::Read;
     use std::fs::File;
     use std::path::Path;
     use std::io::Write;
@@ -10,15 +9,27 @@ pub mod image{
 
     use crate::pixel::pixel;
 
+    /// Image of a RGB image
     #[derive(Clone)]
     pub struct Image{
+        /// height of the image
         pub height: usize,
+        /// width of the image
         pub width: usize,
+        /// max value for a RGB color in pixels 
         pub pixel_encoding: usize,
+        /// pixels contained in the image
         pub pixels: Vec<pixel::Pixel>
     }
 
     impl Image{
+
+        /// Generates an Image structure from a file path
+        /// Reads the source file asynchronously
+        /// # Arguments
+        /// * `filename` - Path of the source ppm file
+        /// # Returns
+        /// * Image Structure
         pub fn new_with_file(filename: &Path) -> Image{
             let (transmitter, receiver) = mpsc::channel();
             let ffile = File::open(filename);
@@ -89,6 +100,11 @@ pub mod image{
             };
         }
 
+        /// Saves the current image into a new ppm file
+        /// # Arguments
+        /// * `filename` - name of the new ppm file
+        /// # Returns
+        /// * Ok Result
         pub fn save(self, filename: &Path) -> std::io::Result<()>{
             let mut file = File::create(filename)?;
             file.write("p3\n".as_bytes())?;
@@ -113,6 +129,11 @@ pub mod image{
         }
     }
 
+    /// Returns an Image from another image with all reversed pixels color
+    /// # Arguments
+    /// * `image` - Source image
+    /// # Returns
+    /// * Reversed Image
     pub fn invert(image :Image) -> Image{
         let mut pixels = image.pixels;
         for  i in 0..pixels.len() {
@@ -126,6 +147,11 @@ pub mod image{
         };
     }
 
+    /// Returns an Image from another image with all grayscaled image
+    /// # Arguments
+    /// * `image` - Source image
+    /// # Returns
+    /// * grayscaled Image
     pub fn grayscale(image : Image) -> Image{
         let mut pixels = image.pixels;
         for  i in 0..pixels.len() {
@@ -140,6 +166,7 @@ pub mod image{
     }
 }
 
+/// Unit tests for Image Structure
 #[cfg(test)]
 mod image_test{
     use std::path::Path;
@@ -147,6 +174,8 @@ mod image_test{
     pub use super::image as image_mod;
     use crate::pixel::pixel;
 
+
+    /// Testing if the image is well loaded
     #[test]
     fn image_load(){
 
@@ -170,6 +199,7 @@ mod image_test{
         }
     }
 
+    /// Testing if the image save didn't crashes
     #[test]
     fn image_save(){
         let image = image_mod::Image::new_with_file(Path::new("./test.ppm"));
@@ -177,6 +207,8 @@ mod image_test{
         assert_eq!(1,1);
     }
 
+
+    /// Testing if the image is well reverted
     #[test]
     fn image_invert(){
         let mut pixels : Vec<pixel::Pixel> = Vec::new();
@@ -199,6 +231,7 @@ mod image_test{
         let _result = inv.save(Path::new("./resultI.ppm"));
     }
 
+    /// Testing if the image is well grayscaled
     #[test]
     fn image_grayscale(){
         let mut pixels : Vec<pixel::Pixel> = Vec::new();
