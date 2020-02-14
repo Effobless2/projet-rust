@@ -42,10 +42,8 @@ pub mod pixel {
         /// # Returns
         /// * String representation of a pixel
         /// # Example
-        /// ```
-        /// for a pixel p1 (red = 5, green = 8, blue = 255)
+        /// a pixel p1 (red = 5, green = 8, blue = 255)
         ///     returns (5,8,255)
-        /// ```
         pub fn display(self) -> String {
             let mut result = String::new();
             result.push_str(&self.red().to_string());
@@ -59,13 +57,11 @@ pub mod pixel {
         /// Reverse pixel values
         /// 
         /// # Example
-        /// ```
-        /// for a pixel (r = 80, g = 100, b = 80)
+        /// a pixel (r = 80, g = 100, b = 80)
         /// r = 255 - 80 = 175
         /// g = 255 - 100 = 155
         /// b = 255 - 80 = 175
         /// pixel = (r = 175, g = 155, b = 175)
-        /// ```
         pub fn inverse(&mut self){
             self.r = 255 - self.r;
             self.g = 255 - self.g;
@@ -78,13 +74,10 @@ pub mod pixel {
     /// # Arguments
     /// * `other` - pixels which will be compared to the current one
     /// # Example
-    /// ```
-    /// for two pixels p1 (2,5,255) and p2 (2,5,255)
+    /// two pixels p1 (2,5,255) and p2 (2,5,255)
     ///     p1 == p2 returns true
-    /// for two pixels p1 (5,5,255) and p2 (2,5,255)
+    /// two pixels p1 (5,5,255) and p2 (2,5,255)
     ///     p1 == p2 returns false
-    /// 
-    /// ```
     impl PartialEq for Pixel{
         fn eq(&self, other: &Self) -> bool{
             self.r == other.red()   && 
@@ -102,11 +95,9 @@ pub mod pixel {
     /// * grayscaled pixel  -> pixel
     /// 
     /// # Example
-    /// ```
-    /// for a pixel (r = 80, g = 100, b = 80)
+    /// a pixel (r = 80, g = 100, b = 80)
     /// r + g + b / 3 = 80 + 100 + 80 / 3 = 260 / 3 = 86
     /// return pixel(r = 86, g = 86, b = 86)
-    /// ```
     pub fn grayscale(pixel: Pixel) -> Pixel{
         let x = ((pixel.red() as u32 + pixel.green() as u32 + pixel.blue() as u32) / 3) as u8;
         Pixel::new(x, x, x)
